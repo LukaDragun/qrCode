@@ -1,0 +1,33 @@
+<!doctype html>
+
+<html lang="en">
+
+<head>
+    <title>Parser</title>
+    <script src="fileSaver.js"></script>
+    <script src="jszip.js"></script>
+    <script src="jszip-utils.js"></script>
+    <script src="xlsx.js"></script>
+    <script src="qrious.min.js"></script>
+    <script src="script.js"></script>
+    <link rel="stylesheet" type="text/css" href="./styles.css">
+</head>
+
+<body>
+    <div id="form">
+        <label class="custom-file-upload">
+            <input id="fileUpload" type="file" id="attachment" />
+            Choose file ...
+        </label>
+        <div id="field-selector"></div>
+
+        <div id="options">
+            <h1>TEXT:</h1>
+            <h1 id="selectedText"></h1>
+            <button id="clear">Clear</button>
+            <button id="download">Download</button>
+        </div>
+    </div>
+</body>
+
+</html>
