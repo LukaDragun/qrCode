@@ -3,8 +3,23 @@ window.onload = function () {
   var selectedFields = [];
 
   var makeCodesAndDownload = function () {
-    if (!array || array.length <= 0 || !selectedFields || selectedFields.length <= 0) return;
-    let texts = array.map((textItem) => selectedFields.reduce((acc, key, index) => acc + textItem[key] + (index === selectedFields.length-1 ? "" : " / ") , ""));
+    if (
+      !array ||
+      array.length <= 0 ||
+      !selectedFields ||
+      selectedFields.length <= 0
+    )
+      return;
+    let texts = array.map((textItem) =>
+      selectedFields.reduce(
+        (acc, key, index) =>
+          acc +
+          textItem[key] +
+          (index === selectedFields.length - 1 ? "" : " / "),
+        ""
+      )
+    );
+    let codes = [];
 
     texts.forEach((item) => {
       let qr = new QRious({
@@ -13,14 +28,16 @@ window.onload = function () {
       codes.push(qr.toDataURL());
     });
 
-    var zip = new JSZip();
-    codes.forEach((item, index) => {
-      zip.file(index + 1 + ".png", urlToPromise(item), { base64: true });
-    });
-    zip.generateAsync({ type: "blob" }).then(function callback(blob) {
-      // see FileSaver.js
-      saveAs(blob, "items.zip");
-    });
+    if (codes.length > 0) {
+      var zip = new JSZip();
+      codes.forEach((item, index) => {
+        zip.file(index + 1 + ".png", urlToPromise(item), { base64: true });
+      });
+      zip.generateAsync({ type: "blob" }).then(function callback(blob) {
+        // see FileSaver.js
+        saveAs(blob, "items.zip");
+      });
+    }
   };
 
   var parseExcel = function (file) {
@@ -29,7 +46,7 @@ window.onload = function () {
 
     document.getElementById("options").style.visibility = "hidden";
     clear();
-    fieldSelector.innerHTML= "";
+    fieldSelector.innerHTML = "";
 
     reader.onload = function (e) {
       var data = e.target.result;
@@ -43,26 +60,26 @@ window.onload = function () {
           workbook.Sheets[sheetName]
         );
         var json_object = JSON.stringify(XL_row_object)
-        .replaceAll("\\n", " ")
-        .replaceAll("[š", "s")
-        .replaceAll("[ž", "z")
-        .replaceAll("[đ", "d")
-        .replaceAll("[č", "c")
-        .replaceAll("[ć", "c")
-        .replaceAll("[Š", "S")
-        .replaceAll("[Đ", "D")
-        .replaceAll("[Ć", "C")
-        .replaceAll("[Č", "C")
-        .replaceAll("[Ž", "Z")
+          .replaceAll("\\n", " ")
+          .replaceAll("[š", "s")
+          .replaceAll("[ž", "z")
+          .replaceAll("[đ", "d")
+          .replaceAll("[č", "c")
+          .replaceAll("[ć", "c")
+          .replaceAll("[Š", "S")
+          .replaceAll("[Đ", "D")
+          .replaceAll("[Ć", "C")
+          .replaceAll("[Č", "C")
+          .replaceAll("[Ž", "Z");
 
         if (json_object.length) {
           document.getElementById("options").style.visibility = "visible";
           array = JSON.parse(json_object);
           let keys = Object.keys(array[0]);
-         
+
           keys.forEach((item) => {
             // creating checkbox element
-            var button = document.createElement('button');
+            var button = document.createElement("button");
             button.innerHTML = item;
             button.onclick = () => addField(item);
             fieldSelector.appendChild(button);
@@ -78,16 +95,17 @@ window.onload = function () {
     reader.readAsBinaryString(file);
   };
 
-  var addField = function(field) {
+  var addField = function (field) {
     selectedFields.push(field);
-    document.querySelector("#selectedText").innerHTML=selectedFields.reduce((acc, item) => acc +  " / "  + item)
-  }
+    document.querySelector("#selectedText").innerHTML = selectedFields.reduce(
+      (acc, item) => acc + " / " + item
+    );
+  };
 
-  
-  var clear = function() {
+  var clear = function () {
     selectedFields = [];
-    document.querySelector("#selectedText").innerHTML=""
-  }
+    document.querySelector("#selectedText").innerHTML = "";
+  };
 
   var pullfiles = function () {
     // love the query selector
@@ -122,7 +140,5 @@ window.onload = function () {
   document
     .getElementById("download")
     .addEventListener("click", makeCodesAndDownload);
-  document
-    .getElementById("clear")
-    .addEventListener("click", clear);
+  document.getElementById("clear").addEventListener("click", clear);
 };
